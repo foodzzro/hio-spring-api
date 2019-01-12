@@ -1,0 +1,9 @@
+api: api
+
+auth:
+  url: auth
+  login: login
+
+admin:
+  users: users
+  restaurants: restaurants
