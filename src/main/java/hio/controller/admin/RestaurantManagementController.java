@@ -2,12 +2,14 @@ package hio.controller.admin;
 
 
 import hio.commons.AppConstants;
+import hio.dto.response.GeneralResponseDTO;
 import hio.dto.response.RestaurantResponseDTO;
 import hio.model.Category;
 import hio.model.Cuisine;
 import hio.model.DeliveryType;
 import hio.model.Restaurant;
 import hio.service.RestaurantService;
+import io.swagger.annotations.ApiParam;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -69,22 +71,27 @@ public class RestaurantManagementController {
         return restDtoList;
     }
 
-    @PostMapping("/image")
-    public String uploadImage(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/update-image")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public GeneralResponseDTO uploadImage (
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("id") Integer id) {
 
         try {
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get(AppConstants.UPLOADED_FOLDER + file.getOriginalFilename());
-            Files.write(path, bytes);
-            File savedImage = new File(AppConstants.UPLOADED_FOLDER + file.getOriginalFilename());
-            restaurantService.saveImage(savedImage);
 
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(AppConstants.UPLOADED_FOLDER + "/original/" + file.getOriginalFilename());
+            Files.write(path, bytes);
+
+            File thumbnails = new File(AppConstants.UPLOADED_FOLDER + "/thumbs/" + file.getOriginalFilename());
+            restaurantService.saveImage(thumbnails, 500,600);
 
         } catch (IOException e) {
             e.printStackTrace();
+            return new GeneralResponseDTO(true, "CANNO_SAVE_IMAGE");
         }
 
-        return "true";
+        return new GeneralResponseDTO(false, "SAVED_IMAGE");
 
     }
 

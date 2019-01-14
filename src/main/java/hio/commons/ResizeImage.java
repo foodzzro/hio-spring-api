@@ -2,8 +2,12 @@ package hio.commons;
 
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 @Service
@@ -12,57 +16,47 @@ public class ResizeImage {
 
     private static final int IMG_WIDTH = 100;
     private static final int IMG_HEIGHT = 100;
-//
-//    public static void main(String [] args){
-//
-//        try{
-//
-//            BufferedImage originalImage = ImageIO.read(new File("c:\\image\\mkyong.jpg"));
-//            int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-//
-//            BufferedImage resizeImageJpg = resizeImage(originalImage, type, 500, 600);
-//            ImageIO.write(resizeImageJpg, "jpg", new File("c:\\image\\mkyong_jpg.jpg"));
-//
-//            BufferedImage resizeImagePng = resizeImage(originalImage, type, 500, 150);
-//            ImageIO.write(resizeImagePng, "png", new File("c:\\image\\mkyong_png.jpg"));
-//
-//            BufferedImage resizeImageHintJpg = resizeImageWithHint(originalImage, type);
-//            ImageIO.write(resizeImageHintJpg, "jpg", new File("c:\\image\\mkyong_hint_jpg.jpg"));
-//
-//            BufferedImage resizeImageHintPng = resizeImageWithHint(originalImage, type);
-//            ImageIO.write(resizeImageHintPng, "png", new File("c:\\image\\mkyong_hint_png.jpg"));
-//
-//        }catch(IOException e){
-//            System.out.println(e.getMessage());
-//        }
-//
-//    }
 
-    public BufferedImage resizeImage(BufferedImage originalImage, int type, int width, int height){
-        BufferedImage resizedImage = new BufferedImage(width, height, type);
-        Graphics2D g = resizedImage.createGraphics();
-        g.drawImage(originalImage, 0, 0, width, height, null);
-        g.dispose();
 
-        return resizedImage;
+
+    public BufferedImage resizeImage(File file, int width, int height) {
+        BufferedImage in = null;
+        try {
+            in = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        BufferedImage out = this.scaleImage(in,
+                BufferedImage.TYPE_INT_RGB, width, height);
+        return out;
+
     }
 
-    private static BufferedImage resizeImageWithHint(BufferedImage originalImage, int type){
 
-        BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, type);
-        Graphics2D g = resizedImage.createGraphics();
-        g.drawImage(originalImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
-        g.dispose();
-        g.setComposite(AlphaComposite.Src);
+    public static BufferedImage scaleImage(BufferedImage image, int imageType,
+                                           int newWidth, int newHeight) {
+        // Make sure the aspect ratio is maintained, so the image is not distorted
+        double thumbRatio = (double) newWidth / (double) newHeight;
+        int imageWidth = image.getWidth(null);
+        int imageHeight = image.getHeight(null);
+        double aspectRatio = (double) imageWidth / (double) imageHeight;
 
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+        if (thumbRatio < aspectRatio) {
+            newHeight = (int) (newWidth / aspectRatio);
+        } else {
+            newWidth = (int) (newHeight * aspectRatio);
+        }
+
+        // Draw the scaled image
+        BufferedImage newImage = new BufferedImage(newWidth, newHeight,
+                imageType);
+        Graphics2D graphics2D = newImage.createGraphics();
+        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                 RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING,
-                RenderingHints.VALUE_RENDER_QUALITY);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics2D.drawImage(image, 0, 0, newWidth, newHeight, null);
 
-        return resizedImage;
+        return newImage;
     }
 
 }

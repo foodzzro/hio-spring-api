@@ -30,13 +30,13 @@ public class RestaurantService {
     }
 
 
-    public Boolean saveImage(File image) {
+    public Boolean saveImage(File image, int width, int height) {
 
         try {
             BufferedImage originalImage = ImageIO.read(image);
             int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-            BufferedImage resizedImage = resizeImageService.resizeImage(originalImage, type, 500, 600);
-            ImageIO.write(resizedImage, "jpg", image);
+            BufferedImage resizedImage = resizeImageService.resizeImage(image, width, height);
+            ImageIO.write(resizedImage, String.valueOf(originalImage.getType()), image);
         } catch(Exception e) {
             e.printStackTrace();
         }
