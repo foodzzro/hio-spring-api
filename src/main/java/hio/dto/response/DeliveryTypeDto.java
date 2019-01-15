@@ -1,41 +1,6 @@
-package hio.model;
+package hio.dto.response;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name="delivery_type")
-public class DeliveryType {
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    private String name;
-
-    public long getMediumTime() {
-        return mediumTime;
-    }
-
-    public void setMediumTime(long mediumTime) {
-        this.mediumTime = mediumTime;
-    }
-
+public class DeliveryTypeDto {
     public int getStandardTax() {
         return standardTax;
     }
@@ -68,10 +33,8 @@ public class DeliveryType {
         this.deliveryTypeUUID = deliveryTypeUUID;
     }
 
-    private long mediumTime;
     private int standardTax;
     private int minDeliveryValue;
     private int freeDelivery;
     private String deliveryTypeUUID;
-
 }

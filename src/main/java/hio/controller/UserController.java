@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiResponses;
 import hio.dto.UserDataDTO;
 import hio.dto.response.UserResponseDTO;
 import hio.model.User;
-import hio.service.UserService;
+import hio.service.implementation.UserService;
 
 @RestController
 @RequestMapping("/users")

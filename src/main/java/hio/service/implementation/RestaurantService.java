@@ -1,4 +1,4 @@
-package hio.service;
+package hio.service.implementation;
 
 import hio.commons.ResizeImage;
 import hio.model.Restaurant;

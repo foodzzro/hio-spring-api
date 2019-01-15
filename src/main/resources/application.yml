@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/hio
-    username: hio
-    password: hio.ro
+    username: postgres
+    password: parola123
   tomcat:
     max-wait: 20000
     max-active: 50
@@ -37,3 +37,5 @@ admin:
   prefix-url: admin
 
 spring.profiles.include: 'routes'
+server:
+  port: 8081

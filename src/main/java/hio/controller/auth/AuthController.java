@@ -3,7 +3,7 @@ package hio.controller.auth;
 import hio.dto.response.AuthResponseDTO;
 import io.swagger.annotations.*;
 import hio.model.User;
-import hio.service.UserService;
+import hio.service.implementation.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
