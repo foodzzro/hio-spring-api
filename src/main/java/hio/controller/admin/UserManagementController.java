@@ -41,7 +41,6 @@ public class UserManagementController {
     public UserResponseDTO create(
             @ApiParam("Email") @RequestParam String email, //
             @ApiParam("Password") @RequestParam String password,
-            @ApiParam("Username") @RequestParam String username,
             @ApiParam("Role") @RequestParam String role,
             @ApiParam("firstName") @RequestParam String firstName,
             @ApiParam("lastName") @RequestParam String lastName,
@@ -52,7 +51,6 @@ public class UserManagementController {
         User user = new User();
         user.setEmail(email);
         user.setPassword(password);
-        user.setUsername(username);
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setPhone(phone);
@@ -71,7 +69,6 @@ public class UserManagementController {
     public UserResponseDTO update(
             @ApiParam("Email") @RequestParam String email, //
             @ApiParam("Password") @RequestParam String password,
-            @ApiParam("Username") @RequestParam String username,
             @ApiParam("Role") @RequestParam String role,
             @ApiParam("firstName") @RequestParam String firstName,
             @ApiParam("lastName") @RequestParam String lastName,
@@ -84,7 +81,6 @@ public class UserManagementController {
         user.setId(id);
         user.setEmail(email);
         user.setPassword(password);
-        user.setUsername(username);
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setPhone(phone);

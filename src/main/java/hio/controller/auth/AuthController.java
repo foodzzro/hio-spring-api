@@ -27,10 +27,11 @@ public class AuthController {
     public AuthResponseDTO login(//
                         @ApiParam("Email") @RequestParam String email, //
                         @ApiParam("Password") @RequestParam String password) {
+
         User user = userService.findByEmail(email);
         AuthResponseDTO response = new AuthResponseDTO();
 
-        response.setToken(userService.signin(user.getUsername(), password));
+        response.setToken(userService.signin(email, password));
         response.setEmail(user.getEmail());
         response.setRoles(user.getRoles());
 

@@ -2,6 +2,7 @@ package hio.controller.admin;
 
 
 import hio.commons.AppConstants;
+import hio.dto.response.GeneralResponseDTO;
 import hio.dto.response.RestaurantResponseDTO;
 import hio.model.Category;
 import hio.model.Cuisine;
@@ -14,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,22 +69,29 @@ public class RestaurantManagementController {
         return restDtoList;
     }
 
-    @PostMapping("/image")
-    public String uploadImage(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/update-image")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public GeneralResponseDTO uploadImage (
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("id") Integer id) {
 
         try {
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get(AppConstants.UPLOADED_FOLDER + file.getOriginalFilename());
-            Files.write(path, bytes);
-            File savedImage = new File(AppConstants.UPLOADED_FOLDER + file.getOriginalFilename());
-            restaurantService.saveImage(savedImage, 200 ,200);
 
+            restaurantService.createImageFolderIfNotExists();
+
+            byte[] bytes = file.getBytes();
+            Path original = Paths.get(AppConstants.UPLOADED_FOLDER + "/" + AppConstants.ORIGINAL_IMAGE_FOLDER + "/" + file.getOriginalFilename());
+            Path thumbs = Paths.get(AppConstants.UPLOADED_FOLDER + "/" + AppConstants.THUMBS_IMAGE_FOLDER + "/" + file.getOriginalFilename());
+
+            Files.write(original, bytes);
+            restaurantService.saveImage(original.toFile(), thumbs.toFile(), 500,600);
 
         } catch (IOException e) {
             e.printStackTrace();
+            return new GeneralResponseDTO(false, "CANNO_SAVE_IMAGE");
         }
 
-        return "true";
+        return new GeneralResponseDTO(true, "SAVED_IMAGE");
 
     }
 

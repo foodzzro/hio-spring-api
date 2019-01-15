@@ -27,14 +27,13 @@ public class ResizeImage {
             e.printStackTrace();
         }
 
-        BufferedImage out = this.scaleImage(in,
+        return this.scaleImage(in,
                 BufferedImage.TYPE_INT_RGB, width, height);
-        return out;
 
     }
 
 
-    public static BufferedImage scaleImage(BufferedImage image, int imageType,
+    private BufferedImage scaleImage(BufferedImage image, int imageType,
                                            int newWidth, int newHeight) {
         // Make sure the aspect ratio is maintained, so the image is not distorted
         double thumbRatio = (double) newWidth / (double) newHeight;
@@ -57,6 +56,15 @@ public class ResizeImage {
         graphics2D.drawImage(image, 0, 0, newWidth, newHeight, null);
 
         return newImage;
+    }
+
+    public static String getFileExtension(File file) {
+        String name = file.getName();
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return ""; // empty extension
+        }
+        return name.substring(lastIndexOf + 1);
     }
 
 }
