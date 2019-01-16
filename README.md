@@ -21,8 +21,7 @@ spring-boot-jwt/
  │       ├── configuration
  │       │   └── SwaggerConfig.java
  │       │
- │       ├── controller
- │       │   └── UserController.java
+ │       ├
  │       │
  │       ├── dto
  │       │   ├── UserDataDTO.java

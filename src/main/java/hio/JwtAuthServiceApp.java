@@ -1,8 +1,7 @@
 package hio;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 
+import hio.service.implementation.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -10,9 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import hio.model.Role;
-import hio.model.User;
-import hio.service.UserService;
 
 @SpringBootApplication
 public class JwtAuthServiceApp implements CommandLineRunner {
@@ -31,6 +27,7 @@ public class JwtAuthServiceApp implements CommandLineRunner {
 
   @Override
   public void run(String... params) throws Exception {
+
 //    User admin = new User();
 //    admin.setUsername("admin");
 //    admin.setPassword("admin");

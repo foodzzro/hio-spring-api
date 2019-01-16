@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/hio
-    username: postgres
-    password: parola123
+    username: hio
+    password: hio.ro
   tomcat:
     max-wait: 20000
     max-active: 50
@@ -25,17 +25,10 @@ security:
       secret-key: secret-key
       expire-length: 36000000
       
-UserController:
-  signin: Authenticates user and returns its JWT token.
-  signup: Creates user and returns its JWT token
-  delete: Deletes specific user by username
-  search: Returns specific user by username
-  me: Returns current user's data
-
 
 admin:
   prefix-url: admin
 
 spring.profiles.include: 'routes'
 server:
-  port: 8081
+  port: 8080

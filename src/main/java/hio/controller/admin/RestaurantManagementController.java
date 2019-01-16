@@ -69,7 +69,7 @@ public class RestaurantManagementController {
         return restDtoList;
     }
 
-    @PostMapping("/update-image")
+    @PostMapping("/update-image/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public GeneralResponseDTO uploadImage (
             @RequestParam("file") MultipartFile file,

@@ -17,7 +17,6 @@ import hio.repository.UserRepository;
 import hio.security.JwtTokenProvider;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -40,17 +39,17 @@ public class UserService {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
       return jwtTokenProvider.createToken(email, userRepository.findByEmail(email).getRoles());
     } catch (AuthenticationException e) {
-      throw new CustomException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new CustomException("Invalid Email/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
 
   public String signup(User user) {
-    if (!userRepository.existsByUsername(user.getUsername())) {
+    if (!userRepository.existsByEmail(user.getEmail())) {
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       userRepository.save(user);
       return jwtTokenProvider.createToken(user.getEmail(), user.getRoles());
     } else {
-      throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
 
@@ -72,9 +71,6 @@ public class UserService {
       }
   }
 
-  public void delete(String username) {
-    userRepository.deleteByUsername(username);
-  }
 
   public void deleteById(Integer id) {
       userRepository.deleteById(id);
@@ -96,24 +92,12 @@ public class UserService {
       return user;
   }
 
-  public User search(String username) {
-    User user = userRepository.findByUsername(username);
-    if (user == null) {
-      throw new CustomException("The user doesn't exist", HttpStatus.NOT_FOUND);
-    }
-    return user;
-  }
-
   public List<User> list() {
       List<User> userList = userRepository.findAll();
       if (userList == null && userList.size() > 0) {
           throw new CustomException("The user doesn't exist", HttpStatus.NOT_FOUND);
       }
     return userList;
-  }
-
-  public User whoami(HttpServletRequest req) {
-    return userRepository.findByUsername(jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(req)));
   }
 
   public ArrayList<Role> getRole(String roles) {

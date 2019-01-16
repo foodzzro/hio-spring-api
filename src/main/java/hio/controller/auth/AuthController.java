@@ -20,7 +20,6 @@ public class AuthController {
 
 
     @PostMapping("/${auth.login}")
-    @ApiOperation(value = "${UserController.signin}")
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 422, message = "Invalid username/password supplied")})

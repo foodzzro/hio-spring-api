@@ -7,4 +7,3 @@ auth:
 admin:
   users: users
   restaurants: restaurants
-    deliverytype: deliverytype
