@@ -9,14 +9,19 @@ import hio.model.Cuisine;
 import hio.model.DeliveryType;
 import hio.model.Restaurant;
 import hio.service.implementation.RestaurantService;
+import io.swagger.annotations.ApiParam;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -71,28 +76,40 @@ public class RestaurantManagementController {
 
     @PostMapping("/update-image/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public GeneralResponseDTO uploadImage (
+    public RestaurantResponseDTO uploadImage (
             @RequestParam("file") MultipartFile file,
-            @RequestParam("id") Integer id) {
+            @ApiParam("id") @PathVariable Integer id) {
 
         try {
-
             restaurantService.createImageFolderIfNotExists();
-
             byte[] bytes = file.getBytes();
-            Path original = Paths.get(AppConstants.UPLOADED_FOLDER + "/" + AppConstants.ORIGINAL_IMAGE_FOLDER + "/" + file.getOriginalFilename());
-            Path thumbs = Paths.get(AppConstants.UPLOADED_FOLDER + "/" + AppConstants.THUMBS_IMAGE_FOLDER + "/" + file.getOriginalFilename());
 
-            Files.write(original, bytes);
-            restaurantService.saveImage(original.toFile(), thumbs.toFile(), 500,600);
+            Path original = Paths.get(AppConstants.UPLOADED_FOLDER + "/" + AppConstants.ORIGINAL_IMAGE_FOLDER + "/" + String.valueOf(id) + file.getOriginalFilename());
+            Path thumbs = Paths.get(AppConstants.UPLOADED_FOLDER + "/" + AppConstants.THUMBS_IMAGE_FOLDER + "/" + String.valueOf(id) + file.getOriginalFilename());
+            Restaurant result = restaurantService.updateImage(id, original, thumbs, bytes);
+            return modelMapper.map(result, RestaurantResponseDTO.class);
 
         } catch (IOException e) {
             e.printStackTrace();
-            return new GeneralResponseDTO(false, "CANNO_SAVE_IMAGE");
+            return null;
         }
 
-        return new GeneralResponseDTO(true, "SAVED_IMAGE");
+    }
 
+    @GetMapping(value = "/restaurant-image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public @ResponseBody byte[] getRestaurantImage( @ApiParam("id") @PathVariable Integer id ) throws ParseException, FileNotFoundException {
+
+        Restaurant restaurant = restaurantService.getRestaurantById(id);
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(restaurant.getImage_src());
+
+        InputStream in = new DataInputStream(new FileInputStream(json.getAsString("original")));
+        try {
+            return IOUtils.toByteArray(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

@@ -18,6 +18,9 @@ public class Restaurant {
     private String address;
     private Double min_order;
     private String contact_phone;
+
+    @Lob
+    @Column
     private String image_src;
 
     @Column(nullable = false, columnDefinition = "boolean default true")
