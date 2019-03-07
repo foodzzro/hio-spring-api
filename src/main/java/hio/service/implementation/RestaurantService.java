@@ -2,7 +2,10 @@ package hio.service.implementation;
 
 import hio.commons.AppConstants;
 import hio.commons.ResizeImage;
+import hio.helpers.CommonServiceHelper;
+import hio.model.DeliveryZone;
 import hio.model.Restaurant;
+import hio.repository.DeliveryZoneRepository;
 import hio.repository.RestaurantRepository;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +26,10 @@ public class RestaurantService {
     RestaurantRepository restaurantRepository;
 
     @Autowired
-    ResizeImage resizeImageService;
+    DeliveryZoneRepository deliveryZoneRepository;
 
+    @Autowired
+    ResizeImage resizeImageService;
 
     public void createImageFolderIfNotExists() {
         if( !this.imageFolderExists() ) {
@@ -40,10 +45,16 @@ public class RestaurantService {
     }
 
     public Restaurant saveRestaurant(Restaurant restaurant) {
+        restaurant.setUuid(CommonServiceHelper.generateUUID());
         restaurantRepository.save(restaurant);
         return restaurant;
     }
 
+
+    public Restaurant updateRestaurant(Restaurant restaurant) {
+        restaurantRepository.save(restaurant);
+        return restaurant;
+    }
 
     public List<Restaurant> getAllRestaurants() {
         return restaurantRepository.findAll();
@@ -53,7 +64,7 @@ public class RestaurantService {
     public Restaurant updateImage(Integer id, Path original, Path thumbs, byte[] bytes) throws IOException {
         Files.write(original, bytes);
         this.saveImageFile(original.toFile(), thumbs.toFile(), 500, 600);
-        return this.saveImagePath(id, original.toString(), thumbs.toString());
+        return this.saveRestaurantImagePath(id, original.toString(), thumbs.toString());
 
     }
 
@@ -74,7 +85,7 @@ public class RestaurantService {
         }
     }
 
-    private Restaurant saveImagePath(Integer restaurantId, String original, String thumb) {
+    private Restaurant saveRestaurantImagePath(Integer restaurantId, String original, String thumb) {
 
         JSONObject json = new JSONObject();
         json.put("original", original);
@@ -83,5 +94,29 @@ public class RestaurantService {
         Restaurant restaurant = restaurantRepository.findOne(restaurantId);
         restaurant.setImage_src(json.toJSONString());
         return restaurantRepository.save(restaurant);
+    }
+
+    public DeliveryZone saveRestaurantDeliveryZones(Integer restaurantId, DeliveryZone deliveryZone) {
+
+        Restaurant restaurant = this.getRestaurantById(restaurantId);
+        deliveryZone.setRestaurant(restaurant);
+        deliveryZoneRepository.save(deliveryZone);
+        return deliveryZone;
+    }
+
+    public void updateRestaurantDeliveryZone(Integer restaurantId, DeliveryZone deliveryZone) {
+
+        Restaurant restaurant = this.getRestaurantById(restaurantId);
+        deliveryZone.setRestaurant(restaurant);
+        deliveryZoneRepository.save(deliveryZone);
+
+    }
+
+    public void deleteDeliveryZone(Integer id) {
+        deliveryZoneRepository.delete(id);
+    }
+
+    public List<DeliveryZone> getDeliveryZones(Integer id) {
+        return deliveryZoneRepository.findByRestaurantId(id);
     }
 }

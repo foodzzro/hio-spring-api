@@ -1,10 +1,10 @@
 package hio.service;
 
-import hio.dto.response.DeliveryTypeDto;
+import hio.dto.response.DeliveryTypeDTO;
 
 import java.util.List;
 
 public interface DeliveryTypeService {
-    public List<DeliveryTypeDto> getAllDeliveryType();
-    public DeliveryTypeDto getDeliveryTypeByUUID(String UUID);
+    public List<DeliveryTypeDTO> getAllDeliveryType();
+    public DeliveryTypeDTO getDeliveryTypeByUUID(String UUID);
 }

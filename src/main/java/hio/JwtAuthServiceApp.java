@@ -1,6 +1,5 @@
 package hio;
 
-
 import hio.service.implementation.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class JwtAuthServiceApp implements CommandLineRunner {
   public void run(String... params) throws Exception {
 
 //    User admin = new User();
-//    admin.setUsername("admin");
 //    admin.setPassword("admin");
 //    admin.setEmail("admin@email.com");
 //    admin.setActive(true);

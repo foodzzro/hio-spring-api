@@ -1,12 +1,11 @@
 package hio.controller.admin;
-
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hio.commons.AppConstants;
-import hio.dto.response.GeneralResponseDTO;
+import hio.commons.ObjectMapperUtils;
+import hio.dto.DeliveryZonesDTO;
+import hio.dto.request.RestaurantDetailsRequestDTO;
 import hio.dto.response.RestaurantResponseDTO;
-import hio.model.Category;
-import hio.model.Cuisine;
-import hio.model.DeliveryType;
+import hio.model.DeliveryZone;
 import hio.model.Restaurant;
 import hio.service.implementation.RestaurantService;
 import io.swagger.annotations.ApiParam;
@@ -26,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/${api}/${admin.prefix-url}/${admin.restaurants}")
@@ -35,30 +35,29 @@ public class RestaurantManagementController {
     private ModelMapper modelMapper;
 
     @Autowired
-    RestaurantService restaurantService;
+    private RestaurantService restaurantService;
 
-    @PostMapping("/create")
+    @GetMapping("/restaurant/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Boolean create() {
-        Restaurant rest = new Restaurant();
+    public RestaurantResponseDTO item(
+            @ApiParam("id") @PathVariable Integer id
+    ) {
+        Restaurant rest = restaurantService.getRestaurantById(id);
+        return modelMapper.map(rest, RestaurantResponseDTO.class);
+    }
 
-        Category category = new Category();
-        category.setName("Salate");
+    @PostMapping("/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public RestaurantResponseDTO update(
+            @RequestBody Map<String, Object> payload
+    ) throws IOException {
 
-        Cuisine cuisine = new Cuisine();
-        cuisine.setName("italieneasca");
 
-        DeliveryType deliveryType = new DeliveryType();
-        deliveryType.setName("pe jos");
-
-        rest.setCategory(category);
-        rest.setDeliveryType(deliveryType);
-        rest.setCuisine(cuisine);
-        rest.setName("new restaurant");
-        rest.setActive(true);
-
+        RestaurantDetailsRequestDTO restaurantDetailsRequestDTO = modelMapper.map(payload, RestaurantDetailsRequestDTO.class);
+        Restaurant rest = modelMapper.map(restaurantDetailsRequestDTO, Restaurant.class);
         restaurantService.saveRestaurant(rest);
-        return true;
+
+        return modelMapper.map(rest, RestaurantResponseDTO.class);
     }
 
     @GetMapping("/list")
@@ -96,7 +95,7 @@ public class RestaurantManagementController {
 
     }
 
-    @GetMapping(value = "/restaurant-image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/restaurant-image/{id}", produces={MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
     public @ResponseBody byte[] getRestaurantImage( @ApiParam("id") @PathVariable Integer id ) throws ParseException, FileNotFoundException {
 
         Restaurant restaurant = restaurantService.getRestaurantById(id);
@@ -110,6 +109,46 @@ public class RestaurantManagementController {
             e.printStackTrace();
             return null;
         }
+    }
+
+
+    @PostMapping("/delivery-zones/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public DeliveryZonesDTO saveDeliveryZones(
+            @ApiParam("id") @PathVariable Integer id,
+            @RequestBody Map<String, Object> payload) {
+
+        DeliveryZonesDTO deliveryZonesDTO = modelMapper.map(payload, DeliveryZonesDTO.class);
+        DeliveryZone deliveryZone = modelMapper.map(deliveryZonesDTO, DeliveryZone.class);
+        restaurantService.saveRestaurantDeliveryZones(id, deliveryZone);
+        deliveryZonesDTO.setId(deliveryZone.getId());
+        return deliveryZonesDTO;
+    }
+
+    @PutMapping("/delivery-zones/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void updateDeliveryZones(
+            @ApiParam("id") @PathVariable Integer id,
+            @RequestBody Map<String, Object> payload) {
+
+        DeliveryZonesDTO deliveryZonesDTO = modelMapper.map(payload, DeliveryZonesDTO.class);
+        DeliveryZone deliveryZone = modelMapper.map(deliveryZonesDTO, DeliveryZone.class);
+        restaurantService.updateRestaurantDeliveryZone(id, deliveryZone);
+    }
+
+    @GetMapping("/delivery-zones/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<DeliveryZonesDTO> getDeliveryZones(@ApiParam("id") @PathVariable Integer id) {
+
+        List<DeliveryZone> deliveryZoneList = restaurantService.getDeliveryZones(id);
+        return ObjectMapperUtils.mapAll(deliveryZoneList, DeliveryZonesDTO.class);
+    }
+
+    @DeleteMapping("/delivery-zones/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void deleteDeliveryZone(@ApiParam("id") @PathVariable Integer id) {
+
+        restaurantService.deleteDeliveryZone(id);
     }
 
 }

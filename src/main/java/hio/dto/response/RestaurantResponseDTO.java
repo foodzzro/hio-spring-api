@@ -1,10 +1,28 @@
 package hio.dto.response;
 
-import hio.model.Category;
 import hio.model.Cuisine;
-import hio.model.DeliveryType;
+import hio.model.PaymentType;
+
+import java.util.List;
 
 public class RestaurantResponseDTO {
+
+    private Integer id;
+    private String name;
+    private String description;
+    private String county;
+    private String city;
+    private String address;
+    private Double min_order;
+    private String contactPhone;
+    private String image_src;
+    private String emailAddressAlert;
+    private Boolean active;
+
+    private DeliveryTypeDTO deliveryType;
+    private Cuisine cuisine;
+    private List<PaymentType> paymentType;
+
 
     public Integer getId() {
         return id;
@@ -62,14 +80,6 @@ public class RestaurantResponseDTO {
         this.min_order = min_order;
     }
 
-    public String getContact_phone() {
-        return contact_phone;
-    }
-
-    public void setContact_phone(String contact_phone) {
-        this.contact_phone = contact_phone;
-    }
-
     public String getImage_src() {
         return image_src;
     }
@@ -78,19 +88,11 @@ public class RestaurantResponseDTO {
         this.image_src = image_src;
     }
 
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public DeliveryType getDeliveryType() {
+    public DeliveryTypeDTO getDeliveryType() {
         return deliveryType;
     }
 
-    public void setDeliveryType(DeliveryType deliveryType) {
+    public void setDeliveryType(DeliveryTypeDTO deliveryType) {
         this.deliveryType = deliveryType;
     }
 
@@ -102,17 +104,38 @@ public class RestaurantResponseDTO {
         this.cuisine = cuisine;
     }
 
-    private Integer id;
-    private String name;
-    private String description;
-    private String county;
-    private String city;
-    private String address;
-    private Double min_order;
-    private String contact_phone;
-    private String image_src;
+    public String getEmailAddressAlert() {
+        return emailAddressAlert;
+    }
 
-    private Category category;
-    private DeliveryType deliveryType;
-    private Cuisine cuisine;
+    public void setEmailAddressAlert(String emailAddressAlert) {
+        this.emailAddressAlert = emailAddressAlert;
+    }
+
+
+    public String getContactPhone() {
+        return contactPhone;
+    }
+
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+
+    public List<PaymentType> getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(List<PaymentType> paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+
 }

@@ -1,23 +1,28 @@
 package hio.model;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.List;
 
-@Entity
-@Table(name = "restaurants")
+@Entity(name = "Restaurant")
+@Table(name = "restaurant")
 public class Restaurant {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String uuid;
     private String name;
     private String description;
     private String county;
     private String city;
     private String address;
     private Double min_order;
-    private String contact_phone;
+    private String contactPhone;
+    private String emailAddressAlert;
+    private Boolean showInSearch;
+
 
     @Lob
     @Column
@@ -26,17 +31,33 @@ public class Restaurant {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean active;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name="category_id",referencedColumnName="id", nullable=false)
-    private Category category;
-
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="cuisine_id",referencedColumnName="id", nullable=false)
     private Cuisine cuisine;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="delivery_type_id",referencedColumnName="id", nullable=false)
     private DeliveryType deliveryType;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    List<PaymentType> paymentType;
+
+    @Lob
+    @OneToMany(
+            mappedBy = "restaurant",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<DeliveryZone> deliveryZones;
+
+    @Transactional
+    public List<DeliveryZone> getDeliveryZones() {
+        return deliveryZones;
+    }
+
+    public void setDeliveryZones(List<DeliveryZone> deliveryZones) {
+        this.deliveryZones = deliveryZones;
+    }
 
     public DeliveryType getDeliveryType() {
         return deliveryType;
@@ -61,15 +82,6 @@ public class Restaurant {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
     }
 
     public Integer getId() {
@@ -120,14 +132,6 @@ public class Restaurant {
         this.min_order = min_order;
     }
 
-    public String getContact_phone() {
-        return contact_phone;
-    }
-
-    public void setContact_phone(String contact_phone) {
-        this.contact_phone = contact_phone;
-    }
-
     public String getImage_src() {
         return image_src;
     }
@@ -142,5 +146,45 @@ public class Restaurant {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public Boolean getShowInSearch() {
+        return showInSearch;
+    }
+
+    public void setShowInSearch(Boolean showInSearch) {
+        this.showInSearch = showInSearch;
+    }
+
+    public String getContactPhone() {
+        return contactPhone;
+    }
+
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+
+    public String getEmailAddressAlert() {
+        return emailAddressAlert;
+    }
+
+    public void setEmailAddressAlert(String emailAddressAlert) {
+        this.emailAddressAlert = emailAddressAlert;
+    }
+
+    public List<PaymentType> getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(List<PaymentType> paymentType) {
+        this.paymentType = paymentType;
     }
 }

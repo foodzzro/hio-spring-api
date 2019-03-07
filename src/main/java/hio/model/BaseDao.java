@@ -1,18 +1,6 @@
 package hio.model;
 
-
-import javax.persistence.*;
-
-@Entity
-@Table(name = "categories")
-public class Category {
-
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
-
+public class BaseDao {
 
     public Integer getId() {
         return id;
@@ -30,6 +18,7 @@ public class Category {
         this.name = name;
     }
 
-
+    protected Integer id;
+    protected String name;
 
 }

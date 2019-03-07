@@ -1,4 +1,4 @@
 FROM openjdk:8
 ADD target/*.jar  /hio-api.jar
-EXPOSE 8080
+EXPOSE 8085
 CMD ["java", "-jar", "/hio-api.jar"]
